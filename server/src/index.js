@@ -1,31 +1,32 @@
 const express = require('express');
 const { graphqlHTTP } = require('express-graphql');
 
-const { buildSchema } = require('graphql');
+const mongoose = require('mongoose');
+
+const typeDefs = require('./typeDefs');
+const resolvers = require('./resolvers');
 
 const app = express();
 
 require('dotenv/config');
 
-const schema = buildSchema(`
-  type Query {
-    returnString: String
-  }
-`);
-
-const rootValue = {
-  returnString: () => 'Some String'
-};
-
 app.use(
   '/cafe',
   graphqlHTTP({
-    schema,
-    rootValue,
+    schema: typeDefs,
+    rootValue: resolvers,
     graphiql: true
   })
 );
 
+mongoose.connect(process.env.CAFE_REACT_CONNECTION, { useUnifiedTopology: true, useNewUrlParser: true }, (err, db) => {
+  if (err) {
+    console.log(err);
+    return;
+  }
+  console.log('Connected to db at port,', 4000);
+});
+
 app.listen(4000, () => {
-  console.log('Server running at port', process.env.PORT);
+  console.log('Server running at port', 4000);
 });
