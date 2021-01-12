@@ -1,3 +1,4 @@
+const cors = require('cors');
 const express = require('express');
 const { graphqlHTTP } = require('express-graphql');
 
@@ -10,6 +11,7 @@ const app = express();
 
 require('dotenv/config');
 
+app.use(cors());
 app.use(
   '/cafe',
   graphqlHTTP({
