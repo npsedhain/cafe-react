@@ -11,6 +11,7 @@ import {
   Select,
   Button as InputButton
 } from '@material-ui/core';
+import { gql, useMutation } from '@apollo/client';
 
 import Button from '../../commons/Button';
 import { MENU_TYPE } from '../../constants';
@@ -41,16 +42,33 @@ const DEFAULT = {
   photo: ''
 };
 
+const ADD_MENU_ITEM = gql`
+  mutation CreateMenuMutation($type: String!, $name: String!, $price: Float!, $photo: String) {
+    createMenuItem(type: $type, name: $name, price: $price, photo: $photo) {
+      _id
+      type
+      name
+      price
+      photo
+    }
+  }
+`;
+
 export default function AddMenuItem({ open, handleClose }) {
   const classes = useStyles();
 
+  const [addMenuItem] = useMutation(ADD_MENU_ITEM);
+
   const [formData, setFormData] = React.useState(DEFAULT);
-  const handleFormDataChange = (key, value) => {
+  const handleFormDataChange = (key, data) => {
+    let value = data;
+    if (key === 'price') value = parseFloat(value);
     setFormData({ ...formData, [key]: value });
   };
 
   const handleSubmit = () => {
     console.log(formData);
+    addMenuItem({ variables: formData });
     handleClose();
   };
 
