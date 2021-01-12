@@ -1,4 +1,5 @@
 import React from 'react';
+import { useQuery, gql } from '@apollo/client';
 import { makeStyles, Container, Grid, Typography } from '@material-ui/core';
 
 import Button from '../../commons/Button';
@@ -22,6 +23,18 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+const GET_MENU_ITEMS = gql`
+  {
+    allMenuItems {
+      _id
+      type
+      name
+      price
+      photo
+    }
+  }
+`;
+
 export default function MenuHome() {
   const classes = useStyles();
 
@@ -34,6 +47,8 @@ export default function MenuHome() {
   const handleDialogClose = () => {
     setDialogOpen(false);
   };
+
+  const { loading, error, data } = useQuery(GET_MENU_ITEMS);
 
   return (
     <Container maxWidth='xl' className={classes.main}>
@@ -48,18 +63,16 @@ export default function MenuHome() {
         </Grid>
       </Grid>
       <Grid container justify='space-between' spacing={4} className={classes.cardsContainer}>
-        <Grid item>
-          <MenuItem type='Main Course' name='Pizza' price='10.99' />
-        </Grid>
-        <Grid item>
-          <MenuItem type='Main Course' name='Pizza' price='10.99' />
-        </Grid>
-        <Grid item>
-          <MenuItem type='Main Course' name='Pizza' price='10.99' />
-        </Grid>
-        <Grid item>
-          <MenuItem type='Main Course' name='Pizza' price='10.99' />
-        </Grid>
+        {data &&
+          data.allMenuItems.map((item, index) => (
+            <Grid key={index} item>
+              <MenuItem type={item.type} name={item.name} price={item.price} photo={item.photo} />
+            </Grid>
+          ))}
+
+        {loading && <>Loading...</>}
+
+        {error && <>Error occurred while fetching.</>}
       </Grid>
       <AddMenuItem open={isDialogOpen} handleClose={handleDialogClose} />
     </Container>
