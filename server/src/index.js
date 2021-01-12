@@ -1,6 +1,7 @@
 const cors = require('cors');
 const express = require('express');
 const { graphqlHTTP } = require('express-graphql');
+const { graphqlUploadExpress } = require('graphql-upload');
 
 const mongoose = require('mongoose');
 
@@ -14,6 +15,7 @@ require('dotenv/config');
 app.use(cors());
 app.use(
   '/cafe',
+  graphqlUploadExpress({ maxFileSize: 100000, maxFiles: 1 }),
   graphqlHTTP({
     schema: typeDefs,
     rootValue: resolvers,

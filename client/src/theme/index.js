@@ -15,7 +15,8 @@ const theme = createMuiTheme({
       primary: '#595B67',
       secondary: '#7C7E89'
     },
-    white: '#FFFFFF'
+    white: '#FFFFFF',
+    danger: '#FF0000'
   }
 });
 

@@ -66,7 +66,7 @@ export default function MenuHome() {
         {data &&
           data.allMenuItems.map((item, index) => (
             <Grid key={index} item>
-              <MenuItem type={item.type} name={item.name} price={item.price} photo={item.photo} />
+              <MenuItem _id={item._id} type={item.type} name={item.name} price={item.price} photo={item.photo} />
             </Grid>
           ))}
 

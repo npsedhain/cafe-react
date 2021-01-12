@@ -7,14 +7,21 @@ const useStyles = makeStyles((theme) => ({
     '&:hover': {
       backgroundColor: theme.palette.primary.main
     }
+  },
+  danger: {
+    backgroundColor: theme.palette.danger,
+    color: theme.palette.white,
+    '&:hover': {
+      backgroundColor: theme.palette.danger
+    }
   }
 }));
 
-function CRButton({ onClick, children }) {
+function CRButton({ onClick, danger, children }) {
   const classes = useStyles();
 
   return (
-    <Button className={classes.button} onClick={onClick}>
+    <Button className={danger ? classes.danger : classes.button} onClick={onClick}>
       {children}
     </Button>
   );

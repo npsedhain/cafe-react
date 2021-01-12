@@ -54,12 +54,25 @@ const ADD_MENU_ITEM = gql`
   }
 `;
 
-export default function AddMenuItem({ open, handleClose }) {
+const EDIT_MENU_ITEM = gql`
+  mutation UpdateMenuItem($_id: ID!, $type: String!, $name: String!, $price: Float!, $photo: String) {
+    updateMenuItem(_id: $_id, type: $type, name: $name, price: $price, photo: $photo) {
+      _id
+      type
+      name
+      price
+      photo
+    }
+  }
+`;
+
+export default function AddMenuItem({ open, handleClose, menuItem }) {
   const classes = useStyles();
 
   const [addMenuItem] = useMutation(ADD_MENU_ITEM);
+  const [editMenuItem] = useMutation(EDIT_MENU_ITEM);
 
-  const [formData, setFormData] = React.useState(DEFAULT);
+  const [formData, setFormData] = React.useState(menuItem || DEFAULT);
   const handleFormDataChange = (key, data) => {
     let value = data;
     if (key === 'price') value = parseFloat(value);
@@ -67,8 +80,11 @@ export default function AddMenuItem({ open, handleClose }) {
   };
 
   const handleSubmit = () => {
-    console.log(formData);
-    addMenuItem({ variables: formData });
+    if (menuItem) {
+      editMenuItem({ variables: formData });
+    } else {
+      addMenuItem({ variables: formData });
+    }
     handleClose();
   };
 
@@ -107,6 +123,7 @@ export default function AddMenuItem({ open, handleClose }) {
                 margin='dense'
                 id='name'
                 type='text'
+                value={formData.name}
                 fullWidth
                 InputProps={{
                   className: classes.textField
@@ -127,6 +144,7 @@ export default function AddMenuItem({ open, handleClose }) {
                 margin='dense'
                 id='price'
                 type='number'
+                value={formData.price}
                 fullWidth
                 InputProps={{
                   className: classes.textField
