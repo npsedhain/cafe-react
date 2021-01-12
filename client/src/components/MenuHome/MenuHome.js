@@ -1,7 +1,10 @@
+import React from 'react';
 import { makeStyles, Container, Grid, Typography } from '@material-ui/core';
 
+import Button from '../../commons/Button';
+
 import MenuItem from './MenuItem';
-import CRButton from '../../commons/Button';
+import AddMenuItem from '../AddMenuItem';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -19,8 +22,19 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function MenuHome() {
+export default function MenuHome() {
   const classes = useStyles();
+
+  const [isDialogOpen, setDialogOpen] = React.useState(false);
+
+  const openAddDialog = () => {
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
+
   return (
     <Container maxWidth='xl' className={classes.main}>
       <Grid container justify='space-between' className={classes.container}>
@@ -30,7 +44,7 @@ function MenuHome() {
           </Typography>
         </Grid>
         <Grid item>
-          <CRButton label='Add Menu Item'></CRButton>
+          <Button onClick={openAddDialog}>Add Menu Item</Button>
         </Grid>
       </Grid>
       <Grid container justify='space-between' spacing={4} className={classes.cardsContainer}>
@@ -47,8 +61,7 @@ function MenuHome() {
           <MenuItem type='Main Course' name='Pizza' price='10.99' />
         </Grid>
       </Grid>
+      <AddMenuItem open={isDialogOpen} handleClose={handleDialogClose} />
     </Container>
   );
 }
-
-export default MenuHome;

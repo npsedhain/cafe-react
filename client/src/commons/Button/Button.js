@@ -10,10 +10,14 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function CRButton({ label }) {
+function CRButton({ onClick, children }) {
   const classes = useStyles();
 
-  return <Button className={classes.button}>{label}</Button>;
+  return (
+    <Button className={classes.button} onClick={onClick}>
+      {children}
+    </Button>
+  );
 }
 
 export default CRButton;
