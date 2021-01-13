@@ -62,7 +62,7 @@ export default function MenuHome() {
           <Button onClick={openAddDialog}>Add Menu Item</Button>
         </Grid>
       </Grid>
-      <Grid container justify='space-between' spacing={4} className={classes.cardsContainer}>
+      <Grid container spacing={4} className={classes.cardsContainer}>
         {data &&
           data.allMenuItems.map((item, index) => (
             <Grid key={index} item>

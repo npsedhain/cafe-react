@@ -1,3 +1,3 @@
-const queries = `allMenuItems: [MenuItem!]!`;
+const queries = `allMenuItems: [MenuItem!]`;
 
 module.exports = queries;

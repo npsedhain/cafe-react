@@ -4,10 +4,11 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-import { ApolloProvider, ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
+import { createUploadLink } from 'apollo-upload-client';
+import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client';
 
-const httpLink = createHttpLink({
-  uri: 'http://localhost:4000/cafe'
+const httpLink = createUploadLink({
+  uri: 'http://localhost:4000/graphql'
 });
 
 const client = new ApolloClient({

@@ -1,7 +1,9 @@
 const menuItemMutations = require('./menuItemMutations');
 
 const mutations = `
-  ${menuItemMutations}
+  type Mutation {
+    ${menuItemMutations}
+  }
 `;
 
 module.exports = mutations;

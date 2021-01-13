@@ -1,3 +1,7 @@
+const AWS = require('aws-sdk');
+AWS.config.update({ region: process.env.BUCKET_REGION });
+const S3 = new AWS.S3({ apiVersion: '2006-03-01' });
+
 const { MenuItem } = require('../models');
 
 const allMenuItems = async () => {
@@ -10,7 +14,25 @@ const allMenuItems = async () => {
   }
 };
 
-const createMenuItem = async ({ type, name, price, photo }) => {
+const createMenuItem = async (_, { type, name, price, file }) => {
+  let photo = '';
+  const fileData = await file;
+
+  if (fileData) {
+    const s3Params = {
+      Bucket: process.env.BUCKET_NAME,
+      Key: fileData.filename,
+      Body: fileData.createReadStream()
+    };
+
+    try {
+      const data = await S3.upload(s3Params).promise();
+      photo = data.Location;
+    } catch (err) {
+      return err;
+    }
+  }
+
   const item = new MenuItem({
     type,
     name,
@@ -27,12 +49,30 @@ const createMenuItem = async ({ type, name, price, photo }) => {
   }
 };
 
-const updateMenuItem = async ({ _id, ...payload }) => {
-  const updatable = ['type', 'name', 'price', 'photo'];
+const updateMenuItem = async (_, { _id, ...payload }) => {
+  let photo = '';
   const update = {};
+  const updatable = ['type', 'name', 'price', 'photo'];
+  const fileData = await payload.file;
 
+  if (fileData) {
+    const s3Params = {
+      Bucket: process.env.BUCKET_NAME,
+      Key: fileData.filename,
+      Body: fileData.createReadStream()
+    };
+
+    try {
+      const data = await S3.upload(s3Params).promise();
+      photo = data.Location;
+    } catch (err) {
+      return err;
+    }
+  }
+
+  const updatedPayload = { ...payload, photo };
   updatable.forEach((item) => {
-    if (payload[item]) update[item] = payload[item];
+    if (updatedPayload[item]) update[item] = updatedPayload[item];
   });
 
   try {
@@ -44,7 +84,7 @@ const updateMenuItem = async ({ _id, ...payload }) => {
   }
 };
 
-const deleteMenuItem = async ({ _id }) => {
+const deleteMenuItem = async (_, { _id }) => {
   try {
     const deleted = await MenuItem.findByIdAndDelete(_id);
 
@@ -55,10 +95,12 @@ const deleteMenuItem = async ({ _id }) => {
 };
 
 const resolvers = {
-  allMenuItems,
-  createMenuItem,
-  updateMenuItem,
-  deleteMenuItem
+  Query: { allMenuItems },
+  Mutation: {
+    createMenuItem,
+    updateMenuItem,
+    deleteMenuItem
+  }
 };
 
 module.exports = resolvers;

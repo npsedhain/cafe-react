@@ -1,10 +1,10 @@
-const { buildSchema } = require('graphql');
+const { gql } = require('apollo-server-express');
 
 const types = require('./types');
 const queries = require('./queries');
 const mutations = require('./mutations');
 
-const GQLSchema = buildSchema(`
+const GQLSchema = gql(`
 ${types}
 
 ${queries}

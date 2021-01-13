@@ -43,8 +43,8 @@ const DEFAULT = {
 };
 
 const ADD_MENU_ITEM = gql`
-  mutation CreateMenuMutation($type: String!, $name: String!, $price: Float!, $photo: String) {
-    createMenuItem(type: $type, name: $name, price: $price, photo: $photo) {
+  mutation CreateMenuMutation($type: String!, $name: String!, $price: Float!, $file: Upload) {
+    createMenuItem(type: $type, name: $name, price: $price, file: $file) {
       _id
       type
       name
@@ -55,8 +55,8 @@ const ADD_MENU_ITEM = gql`
 `;
 
 const EDIT_MENU_ITEM = gql`
-  mutation UpdateMenuItem($_id: ID!, $type: String!, $name: String!, $price: Float!, $photo: String) {
-    updateMenuItem(_id: $_id, type: $type, name: $name, price: $price, photo: $photo) {
+  mutation UpdateMenuItem($_id: ID!, $type: String!, $name: String!, $price: Float!, $file: Upload) {
+    updateMenuItem(_id: $_id, type: $type, name: $name, price: $price, file: $file) {
       _id
       type
       name
@@ -162,7 +162,7 @@ export default function AddMenuItem({ open, handleClose, menuItem }) {
             <Grid sm={9} item>
               <InputButton className={classes.inputButton} variant='contained' component='label'>
                 Choose Photo
-                <input type='file' hidden onInput={(event) => handleFormDataChange('photo', event.target.files[0])} />
+                <input type='file' hidden onInput={(event) => handleFormDataChange('file', event.target.files[0])} />
               </InputButton>
             </Grid>
           </Grid>
