@@ -32,6 +32,11 @@ const useStyles = makeStyles((theme) => ({
     '&:hover': {
       backgroundColor: theme.palette.primary.main
     }
+  },
+  photo: {
+    width: 300,
+    height: 200,
+    objectFit: 'cover'
   }
 }));
 
@@ -39,7 +44,8 @@ const DEFAULT = {
   type: '',
   name: '',
   price: '',
-  photo: ''
+  photo: '',
+  file: ''
 };
 
 const ADD_MENU_ITEM = gql`
@@ -164,6 +170,12 @@ export default function AddMenuItem({ open, handleClose, menuItem }) {
                 Choose Photo
                 <input type='file' hidden onInput={(event) => handleFormDataChange('file', event.target.files[0])} />
               </InputButton>
+              {formData.photo && !formData.file && (
+                <img className={classes.photo} src={formData.photo} alt={formData.name} />
+              )}
+              {formData.file && (
+                <img className={classes.photo} src={URL.createObjectURL(formData.file)} alt={formData.name} />
+              )}
             </Grid>
           </Grid>
           <div className={classes.submit}>

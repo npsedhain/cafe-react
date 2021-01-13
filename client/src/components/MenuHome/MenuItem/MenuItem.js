@@ -10,13 +10,18 @@ const useStyles = makeStyles((theme) => ({
   root: {
     height: 400
   },
-  paper: {
+  paper2: {
     height: 250,
     width: 450,
     backgroundColor: theme.palette.secondary.main
   },
-  paper2: {
-    height: 100,
+  photo: {
+    height: 250,
+    width: 450,
+    objectFit: 'cover'
+  },
+  paper: {
+    height: 350,
     width: 450,
     backgroundColor: theme.palette.surface
   },
@@ -63,8 +68,12 @@ export default function MenuItem({ ...props }) {
 
   return (
     <>
-      <Paper className={classes.paper} />
-      <Paper className={classes.paper2}>
+      <Paper className={classes.paper}>
+        <Grid container className={classes.paper2}>
+          <Grid item>
+            <img className={classes.photo} src={props.photo} alt={props.name} />
+          </Grid>
+        </Grid>
         <Grid container className={classes.cardTextContainer} justify='space-between'>
           <Grid item>
             <Typography variant='h6' color='textSecondary'>
