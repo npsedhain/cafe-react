@@ -17,11 +17,11 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function CRButton({ onClick, danger, children }) {
+function CRButton({ onClick, danger, children, disbaled }) {
   const classes = useStyles();
 
   return (
-    <Button className={danger ? classes.danger : classes.button} onClick={onClick}>
+    <Button disabled={disbaled} className={danger ? classes.danger : classes.button} onClick={onClick}>
       {children}
     </Button>
   );

@@ -6,15 +6,18 @@ import {
   TextField,
   Dialog,
   DialogContent,
+  DialogContentText,
   DialogTitle,
   MenuItem,
   Select,
-  Button as InputButton
+  Button as InputButton,
+  LinearProgress,
+  FormHelperText
 } from '@material-ui/core';
 import { gql, useMutation } from '@apollo/client';
 
-import Button from '../../commons/Button';
-import { MENU_TYPE } from '../../constants';
+import Button from '../../../commons/Button';
+import { MENU_TYPE } from '../../../constants';
 
 const useStyles = makeStyles((theme) => ({
   dialog: {
@@ -37,6 +40,9 @@ const useStyles = makeStyles((theme) => ({
     width: 300,
     height: 200,
     objectFit: 'cover'
+  },
+  error: {
+    color: theme.palette.danger
   }
 }));
 
@@ -47,6 +53,8 @@ const DEFAULT = {
   photo: '',
   file: ''
 };
+
+const REQUIRED = ['type', 'name', 'price'];
 
 const ADD_MENU_ITEM = gql`
   mutation CreateMenuMutation($type: String!, $name: String!, $price: Float!, $file: Upload) {
@@ -61,8 +69,8 @@ const ADD_MENU_ITEM = gql`
 `;
 
 const EDIT_MENU_ITEM = gql`
-  mutation UpdateMenuItem($_id: ID!, $type: String!, $name: String!, $price: Float!, $file: Upload) {
-    updateMenuItem(_id: $_id, type: $type, name: $name, price: $price, file: $file) {
+  mutation UpdateMenuItem($_id: ID!, $type: String!, $name: String!, $price: Float!, $photo: String, $file: Upload) {
+    updateMenuItem(_id: $_id, type: $type, name: $name, price: $price, photo: $photo, file: $file) {
       _id
       type
       name
@@ -72,33 +80,74 @@ const EDIT_MENU_ITEM = gql`
   }
 `;
 
-export default function AddMenuItem({ open, handleClose, menuItem }) {
+export default function AddMenuItem({ open, handleClose, menuItem, refetch }) {
   const classes = useStyles();
 
-  const [addMenuItem] = useMutation(ADD_MENU_ITEM);
-  const [editMenuItem] = useMutation(EDIT_MENU_ITEM);
+  const [addMenuItem, { loading: addLoading }] = useMutation(ADD_MENU_ITEM);
+  const [editMenuItem, { loading: editLoading }] = useMutation(EDIT_MENU_ITEM);
 
+  const [error, setError] = React.useState('');
   const [formData, setFormData] = React.useState(menuItem || DEFAULT);
+  const [formValidation, setFormValidation] = React.useState({
+    type: menuItem && !!menuItem.type,
+    name: menuItem && !!menuItem.name,
+    price: menuItem && !!menuItem.price
+  });
+
   const handleFormDataChange = (key, data) => {
     let value = data;
-    if (key === 'price') value = parseFloat(value);
+    if (key === 'price' && value) value = parseFloat(value);
+
+    if (REQUIRED.includes(key)) {
+      setFormValidation({ ...formValidation, [key]: !!value });
+    }
+
     setFormData({ ...formData, [key]: value });
   };
 
+  const resetDialog = () => {
+    setError('');
+    setFormData(DEFAULT);
+  };
+
+  const validateForm = () => {
+    return REQUIRED.every((key) => formValidation[key]);
+  };
+
   const handleSubmit = () => {
+    if (!validateForm()) return;
+
     if (menuItem) {
-      editMenuItem({ variables: formData });
+      editMenuItem({ variables: formData })
+        .then(() => {
+          resetDialog();
+          handleClose();
+        })
+        .catch((err) => setError(err.message));
     } else {
-      addMenuItem({ variables: formData });
+      addMenuItem({ variables: formData })
+        .then(() => {
+          resetDialog();
+          handleClose();
+          refetch();
+        })
+        .catch((err) => setError(err.message));
     }
-    handleClose();
   };
 
   return (
     <div>
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog
+        open={open}
+        onClose={() => {
+          handleClose();
+          resetDialog();
+        }}
+      >
+        {(editLoading || addLoading) && <LinearProgress />}
         <DialogTitle>Add Menu Item</DialogTitle>
         <DialogContent className={classes.dialog}>
+          <DialogContentText className={classes.error}>{error}</DialogContentText>
           <Grid container spacing={2} alignItems='center' justify='space-between'>
             <Grid sm={3} item>
               <Typography variant='body1'>Type</Typography>
@@ -116,6 +165,9 @@ export default function AddMenuItem({ open, handleClose, menuItem }) {
                   </MenuItem>
                 ))}
               </Select>
+              {!formValidation.type && (
+                <FormHelperText className={classes.error}>This is a required field.</FormHelperText>
+              )}
             </Grid>
           </Grid>
 
@@ -136,7 +188,11 @@ export default function AddMenuItem({ open, handleClose, menuItem }) {
                 }}
                 variant='outlined'
                 onChange={(event) => handleFormDataChange('name', event.target.value)}
+                required
               />
+              {!formValidation.name && (
+                <FormHelperText className={classes.error}>This is a required field.</FormHelperText>
+              )}
             </Grid>
           </Grid>
 
@@ -157,7 +213,11 @@ export default function AddMenuItem({ open, handleClose, menuItem }) {
                 }}
                 variant='outlined'
                 onChange={(event) => handleFormDataChange('price', event.target.value)}
+                required
               />
+              {!formValidation.price && (
+                <FormHelperText className={classes.error}>This is a required field.</FormHelperText>
+              )}
             </Grid>
           </Grid>
 
@@ -179,7 +239,9 @@ export default function AddMenuItem({ open, handleClose, menuItem }) {
             </Grid>
           </Grid>
           <div className={classes.submit}>
-            <Button onClick={handleSubmit}>Save Item</Button>
+            <Button disbaled={editLoading || addLoading} onClick={handleSubmit}>
+              Save Item
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

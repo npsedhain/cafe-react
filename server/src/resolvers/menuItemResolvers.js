@@ -50,7 +50,7 @@ const createMenuItem = async (_, { type, name, price, file }) => {
 };
 
 const updateMenuItem = async (_, { _id, ...payload }) => {
-  let photo = '';
+  let photo = payload.photo || '';
   const update = {};
   const updatable = ['type', 'name', 'price', 'photo'];
   const fileData = await payload.file;
@@ -72,7 +72,7 @@ const updateMenuItem = async (_, { _id, ...payload }) => {
 
   const updatedPayload = { ...payload, photo };
   updatable.forEach((item) => {
-    if (updatedPayload[item]) update[item] = updatedPayload[item];
+    update[item] = updatedPayload[item];
   });
 
   try {

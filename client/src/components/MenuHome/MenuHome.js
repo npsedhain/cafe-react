@@ -5,7 +5,7 @@ import { makeStyles, Container, Grid, Typography } from '@material-ui/core';
 import Button from '../../commons/Button';
 
 import MenuItem from './MenuItem';
-import AddMenuItem from '../AddMenuItem';
+import AddMenuItem from './AddMenuItem';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -48,7 +48,7 @@ export default function MenuHome() {
     setDialogOpen(false);
   };
 
-  const { loading, error, data } = useQuery(GET_MENU_ITEMS);
+  const { loading, error, data, refetch } = useQuery(GET_MENU_ITEMS);
 
   return (
     <Container maxWidth='xl' className={classes.main}>
@@ -66,7 +66,14 @@ export default function MenuHome() {
         {data &&
           data.allMenuItems.map((item, index) => (
             <Grid key={index} item>
-              <MenuItem _id={item._id} type={item.type} name={item.name} price={item.price} photo={item.photo} />
+              <MenuItem
+                _id={item._id}
+                type={item.type}
+                name={item.name}
+                price={item.price}
+                photo={item.photo}
+                refetch={refetch}
+              />
             </Grid>
           ))}
 
@@ -74,7 +81,7 @@ export default function MenuHome() {
 
         {error && <>Error occurred while fetching.</>}
       </Grid>
-      <AddMenuItem open={isDialogOpen} handleClose={handleDialogClose} />
+      <AddMenuItem open={isDialogOpen} handleClose={handleDialogClose} refetch={refetch} />
     </Container>
   );
 }

@@ -3,7 +3,7 @@ import { gql, useMutation } from '@apollo/client';
 import { Grid, makeStyles, Paper, Typography } from '@material-ui/core';
 
 import Button from '../../../commons/Button';
-import AddMenuItem from '../../AddMenuItem';
+import AddMenuItem from '../AddMenuItem';
 import ConfirmationDialog from '../../../commons/ConfirmationDialog';
 
 const useStyles = makeStyles((theme) => ({
@@ -44,7 +44,9 @@ const DELETE_MENU_ITEM = gql`
 export default function MenuItem({ ...props }) {
   const classes = useStyles();
 
-  const [deleteMenuItem] = useMutation(DELETE_MENU_ITEM);
+  const [deleteMenuItem, { loading }] = useMutation(DELETE_MENU_ITEM);
+
+  const [error, setError] = React.useState('');
   const [isEditDialogOpen, setEditDialogOpen] = React.useState(false);
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = React.useState(false);
 
@@ -62,8 +64,12 @@ export default function MenuItem({ ...props }) {
   };
 
   const handleDelete = () => {
-    deleteMenuItem({ variables: { _id: props._id } });
-    handleDialogClose();
+    deleteMenuItem({ variables: { _id: props._id } })
+      .then(() => {
+        handleDialogClose();
+        props.refetch();
+      })
+      .catch((err) => setError(err.message));
   };
 
   return (
@@ -109,6 +115,8 @@ export default function MenuItem({ ...props }) {
           body='Are you sure you want to delete the item?'
           action='Delete'
           handleConfirmation={handleDelete}
+          loading={loading}
+          error={error}
         />
       )}
     </>
