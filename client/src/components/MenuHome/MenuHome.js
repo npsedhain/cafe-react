@@ -59,7 +59,9 @@ export default function MenuHome() {
           </Typography>
         </Grid>
         <Grid item>
-          <Button onClick={openAddDialog}>Add Menu Item</Button>
+          <Button testId='add-button' onClick={openAddDialog}>
+            Add Menu Item
+          </Button>
         </Grid>
       </Grid>
       <Grid container spacing={4} className={classes.cardsContainer}>

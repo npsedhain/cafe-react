@@ -56,7 +56,7 @@ const DEFAULT = {
 
 const REQUIRED = ['type', 'name', 'price'];
 
-const ADD_MENU_ITEM = gql`
+export const ADD_MENU_ITEM = gql`
   mutation CreateMenuMutation($type: String!, $name: String!, $price: Float!, $file: Upload) {
     createMenuItem(type: $type, name: $name, price: $price, file: $file) {
       _id
@@ -131,7 +131,9 @@ export default function AddMenuItem({ open, handleClose, menuItem, refetch }) {
           handleClose();
           refetch();
         })
-        .catch((err) => setError(err.message));
+        .catch((err) => {
+          setError(err.message);
+        });
     }
   };
 
@@ -158,7 +160,13 @@ export default function AddMenuItem({ open, handleClose, menuItem, refetch }) {
                 fullWidth
                 onChange={(event) => handleFormDataChange('type', event.target.value)}
                 variant='outlined'
+                inputProps={{
+                  'data-testid': 'type'
+                }}
               >
+                <MenuItem value=''>
+                  <em>None</em>
+                </MenuItem>
                 {MENU_TYPE.map((type, index) => (
                   <MenuItem key={index} value={type}>
                     {type}
@@ -166,7 +174,7 @@ export default function AddMenuItem({ open, handleClose, menuItem, refetch }) {
                 ))}
               </Select>
               {!formValidation.type && (
-                <FormHelperText className={classes.error}>This is a required field.</FormHelperText>
+                <FormHelperText className={classes.error}>Type is a required field.</FormHelperText>
               )}
             </Grid>
           </Grid>
@@ -179,19 +187,21 @@ export default function AddMenuItem({ open, handleClose, menuItem, refetch }) {
               <TextField
                 className={classes.textField}
                 margin='dense'
-                id='name'
                 type='text'
                 value={formData.name}
                 fullWidth
                 InputProps={{
                   className: classes.textField
                 }}
+                inputProps={{
+                  'data-testid': 'name'
+                }}
                 variant='outlined'
                 onChange={(event) => handleFormDataChange('name', event.target.value)}
                 required
               />
               {!formValidation.name && (
-                <FormHelperText className={classes.error}>This is a required field.</FormHelperText>
+                <FormHelperText className={classes.error}>Name is a required field.</FormHelperText>
               )}
             </Grid>
           </Grid>
@@ -204,19 +214,21 @@ export default function AddMenuItem({ open, handleClose, menuItem, refetch }) {
               <TextField
                 className={classes.textField}
                 margin='dense'
-                id='price'
                 type='number'
                 value={formData.price}
                 fullWidth
                 InputProps={{
                   className: classes.textField
                 }}
+                inputProps={{
+                  'data-testid': 'price'
+                }}
                 variant='outlined'
                 onChange={(event) => handleFormDataChange('price', event.target.value)}
                 required
               />
               {!formValidation.price && (
-                <FormHelperText className={classes.error}>This is a required field.</FormHelperText>
+                <FormHelperText className={classes.error}>Price is a required field.</FormHelperText>
               )}
             </Grid>
           </Grid>
@@ -239,7 +251,7 @@ export default function AddMenuItem({ open, handleClose, menuItem, refetch }) {
             </Grid>
           </Grid>
           <div className={classes.submit}>
-            <Button disbaled={editLoading || addLoading} onClick={handleSubmit}>
+            <Button testId='submit-button' disbaled={editLoading || addLoading} onClick={handleSubmit}>
               Save Item
             </Button>
           </div>

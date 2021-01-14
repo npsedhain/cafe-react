@@ -1,5 +1,6 @@
 import { MockedProvider } from '@apollo/client/testing';
 import { render, screen } from '@testing-library/react';
+
 import App from '../App';
 
 test('renders cafe react header', () => {
