@@ -56,6 +56,10 @@ const DEFAULT = {
 
 const REQUIRED = ['type', 'name', 'price'];
 
+const setDefaultValidation = (menuItem) => {
+  return { type: menuItem && !!menuItem.type, name: menuItem && !!menuItem.name, price: menuItem && !!menuItem.price };
+};
+
 export const ADD_MENU_ITEM = gql`
   mutation CreateMenuMutation($type: String!, $name: String!, $price: Float!, $file: Upload) {
     createMenuItem(type: $type, name: $name, price: $price, file: $file) {
@@ -88,11 +92,7 @@ export default function AddMenuItem({ open, handleClose, menuItem, refetch }) {
 
   const [error, setError] = React.useState('');
   const [formData, setFormData] = React.useState(menuItem || DEFAULT);
-  const [formValidation, setFormValidation] = React.useState({
-    type: menuItem && !!menuItem.type,
-    name: menuItem && !!menuItem.name,
-    price: menuItem && !!menuItem.price
-  });
+  const [formValidation, setFormValidation] = React.useState(setDefaultValidation(menuItem));
 
   const handleFormDataChange = (key, data) => {
     let value = data;
@@ -108,6 +108,7 @@ export default function AddMenuItem({ open, handleClose, menuItem, refetch }) {
   const resetDialog = () => {
     setError('');
     setFormData(DEFAULT);
+    setFormValidation(setDefaultValidation(DEFAULT));
   };
 
   const validateForm = () => {

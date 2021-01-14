@@ -65,19 +65,20 @@ export default function MenuHome() {
         </Grid>
       </Grid>
       <Grid container spacing={4} className={classes.cardsContainer}>
-        {data &&
-          data.allMenuItems.map((item, index) => (
-            <Grid key={index} item>
-              <MenuItem
-                _id={item._id}
-                type={item.type}
-                name={item.name}
-                price={item.price}
-                photo={item.photo}
-                refetch={refetch}
-              />
-            </Grid>
-          ))}
+        {data && data.allMenuItems && data.allMenuItems.length
+          ? data.allMenuItems.map((item, index) => (
+              <Grid key={index} item>
+                <MenuItem
+                  _id={item._id}
+                  type={item.type}
+                  name={item.name}
+                  price={item.price}
+                  photo={item.photo}
+                  refetch={refetch}
+                />
+              </Grid>
+            ))
+          : !loading && !error && <>No menu items created yet.</>}
 
         {loading && <>Loading...</>}
 

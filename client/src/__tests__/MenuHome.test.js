@@ -51,7 +51,9 @@ describe('Menu List Tests', () => {
     const submitButton = screen.getByTestId('submit-button');
     await waitFor(() => fireEvent.click(submitButton));
 
-    const added = screen.getByText('Loading...');
-    expect(added).toBeInTheDocument();
+    await waitFor(() => {
+      const added = screen.getByDisplayValue('Wonderful Dish');
+      expect(added).toBeInTheDocument();
+    });
   });
 });

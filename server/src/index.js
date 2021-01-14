@@ -20,9 +20,9 @@ mongoose.connect(process.env.CAFE_REACT_CONNECTION, { useUnifiedTopology: true, 
     console.log(err);
     return;
   }
-  console.log('Connected to db at port,', 4000);
+  console.log('Connected to db at port,', process.env.PORT);
 });
 
-app.listen(4000, () => {
-  console.log('Server running at port', 4000);
+app.listen(process.env.PORT, () => {
+  console.log('Server running at port', process.env.PORT);
 });
